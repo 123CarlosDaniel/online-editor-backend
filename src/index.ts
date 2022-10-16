@@ -1,6 +1,6 @@
-import { IRoom } from './types.d'
 import app from './app'
 import { Server as SocketServer } from 'socket.io'
+import { Room } from './interfaces/room.interface'
 
 const port = app.get('port')
 console.log('Server running on port', port)
@@ -13,18 +13,21 @@ const io = new SocketServer(server, {
   },
 })
 
-var rooms: IRoom[] = []
+// var rooms: Room[] = []
+var rooms = new Map<string,Room>()
 
-const room = {
+const createRoom =(name:string) : Room=> ({
   users: ['pepe1', 'pepe2', 'pepe3'],
   code: {
     Javascript: 'let language = "javascript"',
     Html: '<h1>Hola mundo</h1>',
     Css: 'h1{color:red;}',
   },
-}
+  name,
+  owner : 'me'
+})
 
-rooms.push(room)
+// rooms.set('room1', createRoom('room1'))
 
 enum languages {
   Javascript = 'Javascript',
@@ -33,26 +36,30 @@ enum languages {
 }
 
 io.on('connection', (socket) => {
-  const code = room.code
-  console.log('hoa')
+
+
   const counter = io.engine.clientsCount
   console.log({ counter }, 'conectado')
 
-  socket.on('join_room', (roomName,cbIsConnected) => {
+  socket.on('join_room', async(roomName,cbIsConnected) => {
+    let code = rooms.get(roomName)?.code
+    if (code === undefined) {
+      rooms.set(roomName,createRoom(roomName))
+      code = rooms.get(roomName)!.code
+    }
     socket.join(roomName)
     cbIsConnected(true)
-    
-    console.log(roomName)
+   
     socket.on('init', (language: languages) => {
-      socket.emit('initCode' + language, code[language])
+      socket.emit('initCode' + language, code![language])
     })
   
     socket.on(
       'clientInsert',
       (index: number, text: string, language: languages) => {
-        let dataCode = code[language]
+        let dataCode = code![language]
         dataCode = dataCode.slice(0, index) + text + dataCode.slice(index)
-        code[language] = dataCode
+        code![language] = dataCode
         socket.to(roomName).emit('serverAction' + language, 'insert', index, text)
       }
     )
@@ -60,9 +67,9 @@ io.on('connection', (socket) => {
     socket.on(
       'clientDelete',
       (index: number, length: number, language: languages) => {
-        let dataCode = code[language]
+        let dataCode = code![language]
         dataCode = dataCode.slice(0, index) + dataCode.slice(index + length)
-        code[language] = dataCode
+        code![language] = dataCode
         socket.to(roomName).emit('serverAction' + language, 'delete', index, length)
       }
     )
@@ -70,10 +77,10 @@ io.on('connection', (socket) => {
     socket.on(
       'clientReplace',
       (index: number, length: number, text: string, language: languages) => {
-        let dataCode = code[language]
+        let dataCode = code![language]
         dataCode =
           dataCode.slice(0, index) + text + dataCode.slice(index + length)
-        code[language] = dataCode
+        code![language] = dataCode
         socket.to(roomName).emit(
           'serverAction' + language,
           'replace',

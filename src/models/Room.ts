@@ -13,7 +13,7 @@ const RoomSchema = new Schema<Room>(
       ref: 'User',
     },
     code: {
-      type: String,
+      type: Object,
     },
     owner : {
       type : Schema.Types.ObjectId

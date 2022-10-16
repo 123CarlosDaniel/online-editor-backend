@@ -4,7 +4,3 @@ interface ILanguage {
   Css: string
 }
 
-export interface IRoom {
-  users: string[]
-  code: ILanguage
-}

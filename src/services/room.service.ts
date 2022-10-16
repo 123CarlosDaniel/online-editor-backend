@@ -13,9 +13,12 @@ const createRoomService = async ({userId,name}: RoomParamsInterface)=>{
     name,
     owner : userId
   })
-
   return {room}
-
 }
 
-export {createRoomService}
+const getRoomByName = async (name:string)=>{
+  const roomFounded = await RoomsModel.findOne({name})
+  return roomFounded
+}
+
+export {createRoomService, getRoomByName}
