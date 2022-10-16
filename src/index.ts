@@ -34,58 +34,64 @@ enum languages {
 
 io.on('connection', (socket) => {
   const code = room.code
-
+  console.log('hoa')
   const counter = io.engine.clientsCount
-  console.log({ counter }, 'gaga1')
-  console.log('conectado')
+  console.log({ counter }, 'conectado')
 
-  socket.on('init', (language: languages) => {
-    socket.emit('initCode' + language, code[language])
+  socket.on('join_room', (roomName,cbIsConnected) => {
+    socket.join(roomName)
+    cbIsConnected(true)
+    
+    console.log(roomName)
+    socket.on('init', (language: languages) => {
+      socket.emit('initCode' + language, code[language])
+    })
+  
+    socket.on(
+      'clientInsert',
+      (index: number, text: string, language: languages) => {
+        let dataCode = code[language]
+        dataCode = dataCode.slice(0, index) + text + dataCode.slice(index)
+        code[language] = dataCode
+        socket.to(roomName).emit('serverAction' + language, 'insert', index, text)
+      }
+    )
+  
+    socket.on(
+      'clientDelete',
+      (index: number, length: number, language: languages) => {
+        let dataCode = code[language]
+        dataCode = dataCode.slice(0, index) + dataCode.slice(index + length)
+        code[language] = dataCode
+        socket.to(roomName).emit('serverAction' + language, 'delete', index, length)
+      }
+    )
+  
+    socket.on(
+      'clientReplace',
+      (index: number, length: number, text: string, language: languages) => {
+        let dataCode = code[language]
+        dataCode =
+          dataCode.slice(0, index) + text + dataCode.slice(index + length)
+        code[language] = dataCode
+        socket.to(roomName).emit(
+          'serverAction' + language,
+          'replace',
+          index,
+          length,
+          text
+        )
+      }
+    )
   })
-
+  
   socket.on('exit', () => {
     socket.disconnect(true)
   })
 
-  socket.on(
-    'clientInsert',
-    (index: number, text: string, language: languages) => {
-      let dataCode = code[language]
-      dataCode = dataCode.slice(0, index) + text + dataCode.slice(index)
-      code[language] = dataCode
-      socket.broadcast.emit('serverAction' + language, 'insert', index, text)
-    }
-  )
-
-  socket.on(
-    'clientDelete',
-    (index: number, length: number, language: languages) => {
-      let dataCode = code[language]
-      dataCode = dataCode.slice(0, index) + dataCode.slice(index + length)
-      code[language] = dataCode
-      socket.broadcast.emit('serverAction' + language, 'delete', index, length)
-    }
-  )
-
-  socket.on(
-    'clientReplace',
-    (index: number, length: number, text: string, language: languages) => {
-      let dataCode = code[language]
-      dataCode =
-        dataCode.slice(0, index) + text + dataCode.slice(index + length)
-      code[language] = dataCode
-      socket.broadcast.emit(
-        'serverAction' + language,
-        'replace',
-        index,
-        length,
-        text
-      )
-    }
-  )
 
   socket.on('disconnect', () => {
     const counter = io.engine.clientsCount
-    console.log({ counter }, 'gaga2')
+    console.log({ counter }, 'exit')
   })
 })
