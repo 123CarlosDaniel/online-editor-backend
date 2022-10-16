@@ -15,6 +15,9 @@ const RoomSchema = new Schema<Room>(
     code: {
       type: String,
     },
+    owner : {
+      type : Schema.Types.ObjectId
+    }
   },
   {
     timestamps: true,

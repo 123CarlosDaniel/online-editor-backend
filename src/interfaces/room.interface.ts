@@ -4,4 +4,5 @@ export interface Room {
   name: string
   users?: SchemaDefinitionProperty[]
   code?: string
+  owner : SchemaDefinitionProperty
 }
