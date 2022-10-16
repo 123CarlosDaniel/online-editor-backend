@@ -13,7 +13,18 @@ const RoomSchema = new Schema<Room>(
       ref: 'User',
     },
     code: {
-      type: Object,
+      Javascript : {
+        type : String,
+        default : 'let language = "javascript"'
+      },
+      Html : {
+        type : String,
+        default : '<h1>Hola mundo</h1>'
+      },
+      Css : {
+        type : String,
+        default : 'h1{color:red;}'
+      }
     },
     owner : {
       type : Schema.Types.ObjectId

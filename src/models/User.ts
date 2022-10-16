@@ -23,7 +23,12 @@ const UserSchema = new Schema<User>(
     },
     contacts: {
       type: Array<String>,
+      default : []
     },
+    rooms : {
+      type: Array<String>,
+      default : []
+    }
   },
   {
     timestamps: true,

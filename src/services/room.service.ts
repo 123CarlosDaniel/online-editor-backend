@@ -1,4 +1,5 @@
 import RoomsModel from "../models/Room"
+import UserModel from "../models/User"
 
 interface RoomParamsInterface {
   userId : string
@@ -13,7 +14,17 @@ const createRoomService = async ({userId,name}: RoomParamsInterface)=>{
     name,
     owner : userId
   })
-  return {room}
+
+  UserModel.findById(userId)
+  .then(user => {
+    if (user?.rooms?.length ===0) {
+      user.rooms = [name]
+    } else {
+      user!.rooms = [...user!.rooms!, name]
+    }
+    return user!.save()
+  }).then()
+  return room
 }
 
 const getRoomByName = async (name:string)=>{

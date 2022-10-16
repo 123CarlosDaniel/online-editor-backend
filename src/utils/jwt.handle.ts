@@ -6,11 +6,11 @@ const JWT_SECRET = process.env.JWT_SECRET || "123456789"
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "gwagwagawgw"
 
 const generateAccessToken = (id:Types.ObjectId) => {
-  const jwt = sign({id}, JWT_SECRET, { expiresIn:'30s'}) 
+  const jwt = sign({id}, JWT_SECRET, { expiresIn:'1d'}) 
   return jwt
 }
 const generateRefreshToken = (id:Types.ObjectId) => {
-  const jwt = sign({id}, JWT_REFRESH_SECRET, { expiresIn:'2h'}) 
+  const jwt = sign({id}, JWT_REFRESH_SECRET, { expiresIn:'30d'}) 
   return jwt
 }
 

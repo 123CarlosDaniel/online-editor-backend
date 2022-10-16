@@ -1,6 +1,7 @@
 import app from './app'
 import { Server as SocketServer } from 'socket.io'
 import { Room } from './interfaces/room.interface'
+import { getRoomByName } from './services/room.service'
 
 const port = app.get('port')
 console.log('Server running on port', port)
@@ -13,21 +14,18 @@ const io = new SocketServer(server, {
   },
 })
 
-// var rooms: Room[] = []
 var rooms = new Map<string,Room>()
 
-const createRoom =(name:string) : Room=> ({
-  users: ['pepe1', 'pepe2', 'pepe3'],
-  code: {
-    Javascript: 'let language = "javascript"',
-    Html: '<h1>Hola mundo</h1>',
-    Css: 'h1{color:red;}',
-  },
-  name,
-  owner : 'me'
-})
-
-// rooms.set('room1', createRoom('room1'))
+// const createRoom =(name:string) : Room=> ({
+//   users: ['pepe1', 'pepe2', 'pepe3'],
+//   code: {
+//     Javascript: 'let language = "javascript"',
+//     Html: '<h1>Hola mundo</h1>',
+//     Css: 'h1{color:red;}',
+//   },
+//   name,
+//   owner : 'me'
+// })
 
 enum languages {
   Javascript = 'Javascript',
@@ -37,14 +35,19 @@ enum languages {
 
 io.on('connection', (socket) => {
 
-
   const counter = io.engine.clientsCount
   console.log({ counter }, 'conectado')
 
   socket.on('join_room', async(roomName,cbIsConnected) => {
     let code = rooms.get(roomName)?.code
     if (code === undefined) {
-      rooms.set(roomName,createRoom(roomName))
+      const roomFounded = await getRoomByName(roomName)
+      rooms.set(roomName,{
+        code : roomFounded?.code,
+        name : roomFounded!.name,
+        users : roomFounded?.users,
+        owner : roomFounded!.owner
+      })
       code = rooms.get(roomName)!.code
     }
     socket.join(roomName)
@@ -95,7 +98,6 @@ io.on('connection', (socket) => {
   socket.on('exit', () => {
     socket.disconnect(true)
   })
-
 
   socket.on('disconnect', () => {
     const counter = io.engine.clientsCount
