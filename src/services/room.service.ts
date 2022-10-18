@@ -9,7 +9,7 @@ interface RoomParamsInterface {
 
 const createRoomService = async ({userId,name}: RoomParamsInterface)=>{
   const roomFounded = await RoomsModel.findOne({name})
-  if (roomFounded) throw new Error('Room name already used')
+  if (roomFounded !== null) throw new Error('Room name already used')
 
   const room = await RoomsModel.create({
     name,
@@ -19,11 +19,12 @@ const createRoomService = async ({userId,name}: RoomParamsInterface)=>{
 
   UserModel.findById(userId)
   .then(user => {
-    user?.rooms?.push({
+    if (user === null) throw new Error('User not found')
+    user.rooms?.push({
       id : room.id,
       name : name
     })
-    return user!.save()
+    return user.save()
   }).then()
   return room
 }
@@ -35,15 +36,16 @@ const getRoomByName = async (name:string)=>{
 
 const verifyRoomInUser = async(userId : string, roomQuery:QueryString.ParsedQs)=>{
   const room = await RoomsModel.findOne(roomQuery)
+  if (room ===null) throw new Error('Room not found')
   const isIncluded = room?.users?.includes(userId)
   return isIncluded
 }
 
 const accessRoomService = async(roomId : string ,email:string)=>{
   const room = await RoomsModel.findById(roomId)
-  if (room ===null) throw new Error('Room not founded')
+  if (room ===null) throw new Error('Room not found')
   const userContact = await UserModel.findOne({email})
-  if (userContact ===null) throw new Error('User not founded')
+  if (userContact ===null) throw new Error('User not found')
   if (room.users?.includes(userContact.id)) return
   room?.users?.push(userContact?.id)
   await room?.save()

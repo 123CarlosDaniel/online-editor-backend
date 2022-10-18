@@ -25,7 +25,7 @@ enum languages {
 io.on('connection', (socket) => {
 
   const counter = io.engine.clientsCount
-  console.log({ counter }, 'conectado')
+  console.log({ counter }, 'connected')
 
   socket.on('join_room', async(roomName,cbIsConnected) => {
     let code = rooms.get(roomName)?.code

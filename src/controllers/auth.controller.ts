@@ -1,15 +1,11 @@
 import { Request, Response } from "express";
 import { loginUserService, registerUserService } from "../services/auth.service";
 import { hashPassword } from "../utils/bcrypt.handle";
-import { handleHttp } from "../utils/error.handle";
-import { validationResult } from "express-validator";
+import { handleHttp, validateErrorHandler } from "../utils/error.handle";
 
 const registerCtrl = async (req:Request, res:Response) => {
   try {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({error:errors.array()})
-    }
+    validateErrorHandler(req,res)
     let {userName, email, password} = req.body
     password =await hashPassword(password)
     const {accessToken,refreshToken,userCreated} = await registerUserService({userName,email,password})
@@ -23,10 +19,7 @@ const registerCtrl = async (req:Request, res:Response) => {
 
 const loginCtrl = async (req:Request, res:Response) => {
   try {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()){
-      return res.status(400).json({error:errors.array()})
-    }
+    validateErrorHandler(req,res)
     const {userFounded,accessToken,refreshToken} = await loginUserService(req.body)
     res.cookie('jwt',refreshToken, {httpOnly:true,sameSite:'lax', secure:false,maxAge:1000*60*60*24*7})
     res.status(202).send({user:userFounded,token:accessToken})

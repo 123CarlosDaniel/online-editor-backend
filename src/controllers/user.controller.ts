@@ -1,7 +1,7 @@
 import { RequestExt } from '../interfaces/req-ext'
 import { Response } from 'express'
 import { addContactService, getUserService } from '../services/user.service'
-import { handleHttp } from '../utils/error.handle'
+import { handleHttp, validateErrorHandler } from '../utils/error.handle'
 
 const getUserCtrl = async (req: RequestExt, res: Response) => {
   try {
@@ -15,6 +15,7 @@ const getUserCtrl = async (req: RequestExt, res: Response) => {
 
 const addContactCtrl = async(req:RequestExt,res:Response)=>{
   try {
+    validateErrorHandler(req,res)
     const email = req.body.email
     await addContactService(req.user?.id,email)
     res.send({inserted : true,error : null})

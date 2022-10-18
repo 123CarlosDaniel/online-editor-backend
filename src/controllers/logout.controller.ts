@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { logoutService } from '../services/logout.service'
+import { handleHttp } from '../utils/error.handle'
 
 const logoutCtrl = async (req: Request, res: Response) => {
   const cookies = req.cookies
@@ -11,8 +12,7 @@ const logoutCtrl = async (req: Request, res: Response) => {
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'lax', secure: false })
     res.sendStatus(202)
   } catch (error: any) {
-    console.log(error.message)
-    res.status(500).send({ error: error.message })
+    handleHttp(res, error.message || 'ERROR_LOGOUT')
   }
 }
 
