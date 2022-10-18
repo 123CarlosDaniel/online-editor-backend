@@ -17,7 +17,7 @@ const addContactCtrl = async(req:RequestExt,res:Response)=>{
   try {
     const email = req.body.email
     await addContactService(req.user?.id,email)
-    res.send({inserted : true})
+    res.send({inserted : true,error : null})
   } catch (error:any) {
     handleHttp(res, error.message || 'ERROR_ADDING_CONTACT')
   }

@@ -1,3 +1,4 @@
+import QueryString from "qs"
 import RoomsModel from "../models/Room"
 import UserModel from "../models/User"
 
@@ -32,8 +33,8 @@ const getRoomByName = async (name:string)=>{
   return roomFounded
 }
 
-const verifyRoomInUser = async(userId : string, roomName:string)=>{
-  const room = await RoomsModel.findOne({name:roomName})
+const verifyRoomInUser = async(userId : string, roomQuery:QueryString.ParsedQs)=>{
+  const room = await RoomsModel.findOne(roomQuery)
   const isIncluded = room?.users?.includes(userId)
   return isIncluded
 }

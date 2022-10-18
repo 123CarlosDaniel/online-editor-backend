@@ -22,8 +22,8 @@ const createRoomCtrl = async (req : RequestExt,res :Response)=>{
 const verifyRoomCtrl = async (req:RequestExt, res: Response)=>{
   try {
     const id = req.user?.id
-    const roomName = req.body.roomName
-    const isIncluded = await verifyRoomInUser(id,roomName)
+    const roomQuery = req.query
+    const isIncluded = await verifyRoomInUser(id,roomQuery)
     return res.send({
       authorized : isIncluded
     })

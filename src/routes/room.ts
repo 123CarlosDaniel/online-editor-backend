@@ -10,5 +10,5 @@ const router = Router()
  */
 router.use(verifyAccessToken)
 router.post('/create',body('name').exists().isAlphanumeric(), createRoomCtrl)
-router.post('/verify', verifyRoomCtrl)
+router.get('/verify', verifyRoomCtrl)
 export {router}
