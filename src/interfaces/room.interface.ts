@@ -10,5 +10,5 @@ export interface Room {
   name: string
   users?: SchemaDefinitionProperty[]
   code?: Code
-  owner : SchemaDefinitionProperty
+  owner : string
 }

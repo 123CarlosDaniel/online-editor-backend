@@ -22,11 +22,18 @@ const UserSchema = new Schema<User>(
       type: String,
     },
     contacts: {
-      type: Array<String>,
+      type: Array<{
+        id : String,
+        name : String,
+        email : String
+      }>,
       default : []
     },
     rooms : {
-      type: Array<String>,
+      type: Array<{
+        id : String,
+        name : String
+      }>,
       default : []
     }
   },

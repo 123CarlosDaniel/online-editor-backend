@@ -12,16 +12,16 @@ const createRoomService = async ({userId,name}: RoomParamsInterface)=>{
 
   const room = await RoomsModel.create({
     name,
-    owner : userId
+    owner : userId,
+    users : [userId]
   })
 
   UserModel.findById(userId)
   .then(user => {
-    if (user?.rooms?.length ===0) {
-      user.rooms = [name]
-    } else {
-      user!.rooms = [...user!.rooms!, name]
-    }
+    user?.rooms?.push({
+      id : room.id,
+      name : name
+    })
     return user!.save()
   }).then()
   return room
@@ -32,4 +32,10 @@ const getRoomByName = async (name:string)=>{
   return roomFounded
 }
 
-export {createRoomService, getRoomByName}
+const verifyRoomInUser = async(userId : string, roomName:string)=>{
+  const room = await RoomsModel.findOne({name:roomName})
+  const isIncluded = room?.users?.includes(userId)
+  return isIncluded
+}
+
+export {createRoomService, getRoomByName, verifyRoomInUser}

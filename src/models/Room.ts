@@ -27,7 +27,7 @@ const RoomSchema = new Schema<Room>(
       }
     },
     owner : {
-      type : Schema.Types.ObjectId
+      type : String
     }
   },
   {
