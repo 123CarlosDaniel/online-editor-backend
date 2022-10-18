@@ -39,4 +39,13 @@ const verifyRoomInUser = async(userId : string, roomQuery:QueryString.ParsedQs)=
   return isIncluded
 }
 
-export {createRoomService, getRoomByName, verifyRoomInUser}
+const accessRoomService = async(roomId : string ,email:string)=>{
+  const room = await RoomsModel.findById(roomId)
+  if (room ===null) throw new Error('Room not founded')
+  const userContact = await UserModel.findOne({email})
+  if (userContact ===null) throw new Error('User not founded')
+  if (room.users?.includes(userContact.id)) return
+  room?.users?.push(userContact?.id)
+  await room?.save()
+}
+export {createRoomService, getRoomByName, verifyRoomInUser, accessRoomService}

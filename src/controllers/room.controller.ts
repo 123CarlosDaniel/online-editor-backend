@@ -1,14 +1,14 @@
 import { Response} from 'express'
 import { validationResult } from 'express-validator'
 import { RequestExt } from '../interfaces/req-ext'
-import { createRoomService, verifyRoomInUser } from '../services/room.service'
+import { accessRoomService, createRoomService, verifyRoomInUser } from '../services/room.service'
 import {handleHttp} from '../utils/error.handle'
 
 const createRoomCtrl = async (req : RequestExt,res :Response)=>{
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(400).json({errors:errors.array()})
+      return res.status(400).json({error:errors.array()})
     }
     const { name } = req.body
     const userId = req.user?.id
@@ -31,4 +31,21 @@ const verifyRoomCtrl = async (req:RequestExt, res: Response)=>{
     handleHttp(res, error.message || "ERROR_VERIFYING_USER")
   }
 }
-export {createRoomCtrl, verifyRoomCtrl}
+
+const accessRoomCtrl = async(req:RequestExt,res:Response)=>{
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({error:errors.array()})
+    }
+    const {roomId,email} = req.body
+    await accessRoomService(roomId ,email)
+    res.send({
+      added : true,
+      error : null
+    })
+  } catch (error:any) {
+    handleHttp(res, error.message || "ERROR_VERIFYING_USER")
+  }
+}
+export {createRoomCtrl, verifyRoomCtrl, accessRoomCtrl}

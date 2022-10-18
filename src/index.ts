@@ -16,17 +16,6 @@ const io = new SocketServer(server, {
 
 var rooms = new Map<string,Room>()
 
-// const createRoom =(name:string) : Room=> ({
-//   users: ['pepe1', 'pepe2', 'pepe3'],
-//   code: {
-//     Javascript: 'let language = "javascript"',
-//     Html: '<h1>Hola mundo</h1>',
-//     Css: 'h1{color:red;}',
-//   },
-//   name,
-//   owner : 'me'
-// })
-
 enum languages {
   Javascript = 'Javascript',
   Html = 'Html',

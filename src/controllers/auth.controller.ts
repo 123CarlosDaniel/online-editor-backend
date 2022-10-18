@@ -8,7 +8,7 @@ const registerCtrl = async (req:Request, res:Response) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(400).json({errors:errors.array()})
+      return res.status(400).json({error:errors.array()})
     }
     let {userName, email, password} = req.body
     password =await hashPassword(password)
@@ -25,7 +25,7 @@ const loginCtrl = async (req:Request, res:Response) => {
   try {
     const errors = validationResult(req)
     if (!errors.isEmpty()){
-      return res.status(400).json({errors:errors.array()})
+      return res.status(400).json({error:errors.array()})
     }
     const {userFounded,accessToken,refreshToken} = await loginUserService(req.body)
     res.cookie('jwt',refreshToken, {httpOnly:true,sameSite:'lax', secure:false,maxAge:1000*60*60*24*7})
