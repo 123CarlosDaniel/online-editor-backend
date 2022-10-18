@@ -1,10 +1,11 @@
 import { Router } from 'express'
-import { getUserCtrl } from '../controllers/user.controller'
+import { addContactCtrl, getUserCtrl } from '../controllers/user.controller'
 import verifyAccessToken from '../middlewares/verifyAccessToken'
 
 const router = Router()
 
 router.use(verifyAccessToken)
 router.get('/', getUserCtrl)
+router.post('/addContact',addContactCtrl )
 
 export { router }
