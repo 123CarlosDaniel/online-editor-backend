@@ -35,7 +35,13 @@ const getRoomByName = async (name:string)=>{
 }
 
 const verifyRoomInUser = async(userId : string, roomQuery:QueryString.ParsedQs)=>{
-  const room = await RoomsModel.findOne(roomQuery)
+  let room
+  if (roomQuery.id) {
+    room = await RoomsModel.findById(roomQuery.id)
+  } else {
+    room = await RoomsModel.findOne({name : roomQuery.name})
+  }
+  console.log(room?.users, userId)
   if (room ===null) throw new Error('Room not found')
   const isIncluded = room?.users?.includes(userId)
   return isIncluded
@@ -47,7 +53,11 @@ const accessRoomService = async(roomId : string ,email:string)=>{
   const userContact = await UserModel.findOne({email})
   if (userContact ===null) throw new Error('User not found')
   if (room.users?.includes(userContact.id)) return
-  room?.users?.push(userContact?.id)
-  await room?.save()
+  room.users?.push(userContact?.id)
+  userContact.rooms?.push({
+    id : roomId,
+    name : room.name
+  })
+  await Promise.all([room.save(),userContact.save()])
 }
 export {createRoomService, getRoomByName, verifyRoomInUser, accessRoomService}

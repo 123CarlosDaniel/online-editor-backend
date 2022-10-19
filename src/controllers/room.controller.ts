@@ -24,6 +24,7 @@ const verifyRoomCtrl = async (req: RequestExt, res: Response) => {
     const id = req.user?.id
     const roomQuery = req.query
     const isIncluded = await verifyRoomInUser(id, roomQuery)
+    console.log({isIncluded})
     return res.send({
       authorized: isIncluded,
     })
