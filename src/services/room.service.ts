@@ -1,6 +1,7 @@
 import QueryString from "qs"
 import RoomsModel from "../models/Room"
 import UserModel from "../models/User"
+import { Code } from "../interfaces/room.interface"
 
 interface RoomParamsInterface {
   userId : string
@@ -41,7 +42,6 @@ const verifyRoomInUser = async(userId : string, roomQuery:QueryString.ParsedQs)=
   } else {
     room = await RoomsModel.findOne({name : roomQuery.name})
   }
-  console.log(room?.users, userId)
   if (room ===null) throw new Error('Room not found')
   const isIncluded = room?.users?.includes(userId)
   return isIncluded
@@ -60,4 +60,8 @@ const accessRoomService = async(roomId : string ,email:string)=>{
   })
   await Promise.all([room.save(),userContact.save()])
 }
-export {createRoomService, getRoomByName, verifyRoomInUser, accessRoomService}
+
+const saveRoomCodeService = async(roomName : string, code : Code ) =>{
+  await RoomsModel.findOneAndUpdate({name : roomName}, {code})
+}
+export {createRoomService, getRoomByName, verifyRoomInUser, accessRoomService, saveRoomCodeService}

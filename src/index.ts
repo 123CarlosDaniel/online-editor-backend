@@ -1,7 +1,7 @@
 import app from './app'
 import { Server as SocketServer } from 'socket.io'
 import { Room } from './interfaces/room.interface'
-import { getRoomByName } from './services/room.service'
+import { getRoomByName, saveRoomCodeService } from './services/room.service'
 
 const port = app.get('port')
 console.log('Server running on port', port)
@@ -84,7 +84,11 @@ io.on('connection', (socket) => {
     )
   })
   
-  socket.on('exit', () => {
+  socket.on('exit', async(roomName) => {
+    let code = rooms.get(roomName)?.code
+    if (code !== undefined) {
+      await saveRoomCodeService(roomName,code)
+    }
     socket.disconnect(true)
   })
 

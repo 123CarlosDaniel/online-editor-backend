@@ -1,6 +1,6 @@
 import { SchemaDefinitionProperty } from 'mongoose'
 
-type Code = {
+export type Code = {
   Javascript : string
   Html : string
   Css : string

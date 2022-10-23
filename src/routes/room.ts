@@ -10,7 +10,7 @@ import {
 const router = Router()
 
 /**
- *  * http://localhost:3500/room/ [POST]
+ *  * http://localhost:3500/api/room/ [POST]
  */
 router.use(verifyAccessToken)
 router.post('/create', body('name').exists().isAlphanumeric(), createRoomCtrl)

@@ -3,7 +3,7 @@ import { loginCtrl, registerCtrl } from '../controllers/auth.controller'
 import { body } from 'express-validator'
 const router = Router()
 /**
- *  *http://localhost:3500/auth/ [POST]
+ *  *http://localhost:3500/api/auth/ [POST]
  */
 
 router.post(

@@ -17,7 +17,7 @@ app.use(cors(corsOption))
 app.use(express.json())
 app.use(cookieParser())
 
-app.use(router)
+app.use('/api',router)
 
 app.use(errorHandler)
 
