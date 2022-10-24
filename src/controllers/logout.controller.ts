@@ -9,7 +9,7 @@ const logoutCtrl = async (req: Request, res: Response) => {
   try {
     const refreshToken = cookies.jwt
     await logoutService(refreshToken)
-    res.clearCookie('jwt', { httpOnly: true, sameSite: 'lax', secure: true })
+    res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: true })
     res.sendStatus(202)
   } catch (error: any) {
     handleHttp(res, error.message || 'ERROR_LOGOUT')
