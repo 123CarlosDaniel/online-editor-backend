@@ -9,7 +9,7 @@ const registerCtrl = async (req:Request, res:Response) => {
     let {userName, email, password} = req.body
     password =await hashPassword(password)
     const {accessToken,refreshToken,userCreated} = await registerUserService({userName,email,password})
-    res.cookie('jwt',refreshToken,{ httpOnly:true,sameSite:'lax',secure:false,maxAge:1000 * 60 * 60 * 24 * 7})
+    res.cookie('jwt',refreshToken,{ httpOnly:true,sameSite:'lax',secure:true,maxAge:1000 * 60 * 60 * 24 * 7})
     res.status(201).send({user:userCreated,token: accessToken})
 
   } catch (error: any) {
@@ -21,7 +21,7 @@ const loginCtrl = async (req:Request, res:Response) => {
   try {
     validateErrorHandler(req,res)
     const {userFounded,accessToken,refreshToken} = await loginUserService(req.body)
-    res.cookie('jwt',refreshToken, {httpOnly:true,sameSite:'lax', secure:false,maxAge:1000*60*60*24*7})
+    res.cookie('jwt',refreshToken, {httpOnly:true,sameSite:'lax', secure:true,maxAge:1000*60*60*24*7})
     res.status(202).send({user:userFounded,token:accessToken})
   } catch (error:any) {
     handleHttp(res,error.message || "ERROR_LOGIN")
